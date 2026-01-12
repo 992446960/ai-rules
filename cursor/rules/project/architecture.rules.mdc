@@ -1,0 +1,21 @@
+---
+description: 项目架构与变更影响控制规则
+globs:
+  - "src/**/*"
+alwaysApply: true
+---
+
+# 项目架构与目录规范
+
+## 目录职责
+- src/api：接口定义
+- src/views：页面
+- src/components：通用组件
+- src/store/modules：Pinia 模块
+- src/utils：工具函数
+- src/assets/styles：样式
+
+## 架构原则
+- 页面负责组合，不写复杂逻辑
+- 业务逻辑下沉到 hooks / utils
+- 全局状态最小化
