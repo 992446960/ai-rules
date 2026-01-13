@@ -1,0 +1,84 @@
+---
+alwaysApply: false
+---
+## 文件位置
+在src/subPackages下创建
+
+## 描述
+1、这是一个医生详情界面包括自定义导航和主要内容
+2、需要实现从首页的医生卡片点击跳转进入该页面
+3、主要包括医生头像、名字、职位、介绍等，主要内容为常见问题卡片
+4、开发过程抽取常见问题卡片为当前目录下的组件
+
+## 开发思路
+
+#### 布局
+采用全局rules提供的思路自定义导航+内容盒子撑开，主要在内容盒子里面书写
+
+#### 功能
+
+需要实现根据具首页点击不同的医生传入医生的id获取医生信息进行渲染，注意需要自定义nav 的title为医生的名字
+
+#### 样式
+
+
+##### 头像
+width: 211rpx;
+height: 211rpx;
+padding-top:80rpx;
+padding-bottom:42rpx;
+
+##### 名字
+font-weight: 500;
+font-size: 40rpx;
+color: #13113E;
+line-height: 48rpx;
+margin-bottom:17rpx;
+
+##### 职称
+font-weight: 400;
+font-size: 32rpx;
+color: #13113E;
+line-height: 48rpx;
+margin-bottom:9rpx;
+
+##### 单位
+font-weight: 400;
+font-size: 28rpx;
+color: #7D88AC;
+line-height: 48rpx;
+
+#### 常见问题卡片
+font-weight: 500;
+font-size: 34rpx;
+color: #13113E;
+line-height: 48rpx;
+
+##### left icon
+size 49rpx
+margin-right：12rpx；
+
+##### right icon
+size 28rpx
+margin-right：14rpx；
+
+##### 换一批
+font-weight: 400;
+font-size: 28rpx;
+color: #7D88AC;
+line-height: 40rpx;
+
+##### card
+padding:38rpx;
+
+##### card item
+margin-bottom:26rpx;
+font-weight: 400;
+font-size: 28rpx;
+color: #13113E;
+line-height: 105rpx;
+
+
+
+
+

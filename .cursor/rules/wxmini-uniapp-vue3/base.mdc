@@ -1,0 +1,243 @@
+---
+alwaysApply: true
+---
+
+# 项目基础规则
+
+1、不能修改`src/uni_modules`路径下的源码
+2、普通的提示信息使用 uni.$u.toast 不使用 uni.showToast
+```javascript
+  uni.$u.toast('msg')
+```
+3、数据分页参数为一个对象
+```javascript
+  {
+    page:1,
+    size:5
+  }
+```
+4、加载更多实用 up-loadmore 组件
+
+5、使用generate commit message 进行git提交记录使用使用中文，anget窗口不进行代码提交。
+
+6、开发页面的时候要综合考虑组件的复用性，进行合理的组件分割，考虑样式的复用，如果在其他地方多次使用的需要提取到common.scss中，使用的时候也要看common.scss中时候有可以复用的样式。
+
+7、交互逻辑书写的时候：
+ 7.1、使用uview-plus提供的函数的时候，不要引入，使用uni.$u.debounce()这样类型进行调用。
+
+## 项目定位
+
+### 主要目标
+
+- **优先平台**: 微信小程序（主要开发目标，优先保证运行正常）
+- **兼容平台**: H5（需要基本适配，保证可用性）
+- **背景图处理**: 每个页面统一使用全局背景图，背景图地址配置在 `src/config/system.js` 中的 `pageBackground.imageUrl`
+  - 背景图使用网络地址：`https://mediverseapi.huaxisy.com/avatar/background.png`
+  - **不放在 `static` 目录下**（避免增加包体积）
+  - 背景图已在全局样式（`src/static/styles/common.scss`）中通过 `page` 元素统一设置
+  - **无需**在页面中单独添加背景图标签或本地图片资源
+  - 加载失败时使用备用背景色（配置在 `pageBackground.fallbackColor`）
+
+## 技术栈
+
+### 核心框架
+
+- **基础框架**: UniApp (通过官方 CLI 创建)
+- **Vue 版本**: Vue 3
+- **构建工具**: Vite
+- **语言**: JavaScript（不使用 TypeScript）
+- **UI 组件库**: uview-plus (适配 Vue 3)
+  - 源码位置: `src/uni_modules/uview-plus`
+  - 官方文档: https://uview-plus.jiangruyi.com/components/search.html
+  - **使用规范**: 书写样式和组件时请参考源码实现，了解组件内部结构
+
+### 开发工具配置
+
+- **自动导入**: 已配置 `unplugin-auto-import`，自动导入 Vue 和 uni 常用函数
+  - 配置文件: `vite.config.js`
+  - 无需手动 import `ref`, `reactive`, `computed`, `onMounted` 等 Vue API
+  - 无需手动 import `uni.showToast`, `uni.request` 等 uni API
+- **自动导入**: 已配置 `easycom`，easycom 模式会`src\components\`以下的名称以 hx/HX 开头的组件
+  - 配置文件: `src/pages.json`
+  - 无需手动 import `src\components\`以下的名称以 hx/HX 开头的组件
+  - 无需手动 import `uni.showToast`, `uni.request` 等 uni API
+
+### 页面配置
+
+- **路由配置**: `src/pages.json`
+- **页面创建规范**:
+  - 主包页面: 在 `pages.json` 的 `pages` 数组中配置
+  - 分包页面: 在 `pages.json` 的 `subPackages` 中配置
+  - **必须配置**: 所有页面都需要设置 `"navigationStyle": "custom"`（自定义导航栏）
+
+## 开发规范
+
+### 样式规范
+
+#### 1. Sass 样式设计
+
+- **设计模式**: 参考 Tailwind CSS 的设计理念
+- **样式复用**: 重复使用的样式和变量需要维护在公共文件中，方便复用
+- **暗黑模式**: 样式书写和组件库样式修改时，需要考虑后期暗黑模式的转换
+- **嵌套层级**: 样式嵌套不超过 4 层
+- **类名规范**: 采用 BEM 风格或语义化命名，如 `list-item`, `form-input`, `card-header` 等
+- **类名备注**: 更具功能给样式也添加备注
+
+#### 2. 样式文件组织
+
+- **公共样式**: 参考 `src/static/styles/common.scss`
+- **主题变量**: 参考 `src/static/styles/theme.scss`
+- **页面样式**: 使用 `<style lang="scss" scoped>` 编写页面私有样式
+- **样式覆盖**: 使用 `::v-deep` 或 `:deep()` 深度选择器覆盖组件库样式
+
+#### 3.创建文件规范
+
+- **创建文件**: 参考 `.cursor/rules/directory.mdc`
+- **公用组件**: 在 `src\components\`下创建同名目录组件如下
+  ├── components/ # 公共组件（全局复用）
+  │ └── HxTabScroll/ # 自定义组件（按组件名创建文件夹）
+  │ └── HxTabScroll.vue # 组件文件
+
+#### 4.书写样式规范（必须）
+
+- **单行文字**: 带有背景卡片的单行盒子使用利用 line-height 撑开盒子不要在上下加 margin 或者 padding
+- **button 单行文字**: 使用利用 line-height 撑开盒子，不加上下的 padding 只写左右的 padding
+
+#### 5.html 书写规范
+
+- **标签**: 组件无插槽的使用自闭和标签
+
+#### 6.api 书写规范
+
+- **命名**: 功能名字叫api 例如：loginApi
+
+### 代码组织规范
+
+需要提取公共函数和方法，也可以使用三方 uview-plus 提供的工具函数
+
+- **参考网页**：`https://uview-plus.jiangruyi.com/js/intro.html`
+- **源码地址**：`src/uni_modules/uview-plus/index.js`
+
+#### 1. 数据管理
+
+- **大数据量**: 当代码中数据量较多时，将数据放在当前目录下的 `config.js` 文件中维护
+- **数据获取**: 通过 `useHook` 形式获取数据（如 `useFormConfig()`）
+- **公共枚举**: 放入 `src/config/enum.js` 文件中维护
+- **表单验证规则**: 公共验证规则放入 `src/config/validate.js` 文件中维护
+
+#### 2. 组件化开发
+
+- **组件思维**: 要有组件化思维，书写页面时封装可复用、扩展性高的组件
+- **组件分类**:
+  - 公共组件: `src/components/`（全局复用）
+  - 页面私有组件: `pages/xxx/components/`（仅当前页面使用）
+- **组件命名**: 使用 PascalCase，如 `DoctorCard.vue`, `FormInput.vue`
+
+#### 3. 注释规范
+
+- **函数/方法**: 使用 JSDoc 风格注释
+- **复杂逻辑**: 必须添加注释说明
+- **示例**:
+
+```javascript
+/**
+ * 获取用户信息
+ * @param {string} userId - 用户ID
+ * @returns {Promise<Object>} 用户信息对象
+ */
+const getUserInfo = async (userId) => {
+  // 实现逻辑
+};
+```
+
+### 页面布局规范
+
+#### 1. 图片和布局
+
+- **图片识别**: 识别图片或页面布局书写时，必须参考 `.cursor/rules/style.mdc`
+- **背景图**: 背景图已在全局样式中统一设置，使用网络地址，**无需在页面中添加背景图相关代码**
+- **自定义导航**: 关于涉及到自定义导航（HxNavbar）的页面 page container 盒子设置 padding 或者 margin 时候需要避开导航盒子（HxNavbar）
+
+#### 2. Flex 布局模式
+
+页面主要布局采用 **Flex 布局模式**，遵循以下原则：
+
+- **导航栏**:
+
+  - 使用 uview-plus 的 `up-navbar` 组件（已内置顶部安全区适配）
+  - 书写页面样式时**不需要**单独处理 `up-navbar` 盒子的顶部安全区适配
+  - 导航栏容器设置 `flex-shrink: 0` 防止被压缩
+
+- **典型页面结构**（导航 + 内容 + 按钮）:
+
+  - 页面容器设置为 `display: flex; flex-direction: column`
+  - 导航栏和底部按钮区域设置 `flex-shrink: 0`（不压缩）
+  - 中间内容区域设置 `flex: 1`（自动撑满剩余空间）
+
+- **滚动处理**:
+  - **数据列表**: 使用 `scroll-view` 组件包裹，设置 `scroll-y="true"`
+  - **普通内容**: 使用 `overflow-y: auto` 实现超出隐藏滚动
+
+#### 3. 页面结构模板
+
+<template>
+  <view class="container page-xxx">
+
+    <!-- 导航栏 -->
+    <view class="user-nav-bar">
+      <up-navbar ... />
+    </view>
+
+    <!-- 页面内容区域 -->
+    <view class="page-content">
+      <!-- 内容 -->
+    </view>
+
+    <!-- 底部按钮（如需要） -->
+    <view class="page-actions">
+      <!-- 按钮 -->
+    </view>
+
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.page-xxx {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  position: relative; // 确保内容在背景图上方
+
+  .user-nav-bar {
+    flex-shrink: 0; // 导航栏不压缩
+    position: relative; // 确保导航栏在背景图上方
+  }
+
+  .page-content {
+    flex: 1; // 内容区域自动撑满
+    overflow-y: auto; // 或使用 scroll-view
+    min-height: 0; // 配合 flex: 1 使用
+    position: relative; // 确保内容在背景图上方
+  }
+
+  .page-actions {
+    flex-shrink: 0; // 底部按钮不压缩
+    padding-bottom: env(safe-area-inset-bottom); // 适配安全区域
+    position: relative; // 确保按钮在背景图上方
+  }
+}
+</style>
+
+## 注意事项
+
+1. **小程序优先**: 所有功能开发优先保证微信小程序正常运行
+2. **组件库使用**: 使用 uview-plus 组件时，遇到问题先查看源码实现
+3. **样式隔离**: 使用 `scoped` 样式，避免样式污染
+4. **性能优化**: 注意图片大小、列表渲染性能等小程序限制
+5. **兼容性**: 考虑不同端（小程序、H5）的兼容性差异
+6. **组件化思维**: 书写页面时封装可复用、扩展性高的组件
+7. **样式参考**: 识别图片或页面布局书写时，必须参考 `.cursor/rules/style.mdc`
+
+5、要有组件话思维，书写页面时候封装可复用扩展性高的组件。
+6、识别图片事业页面或者页面布局书写的时候必须参考.cursor/rules/style.mdc

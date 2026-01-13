@@ -1,0 +1,130 @@
+---
+description: Create files, configure
+alwaysApply: false
+---
+## 项目目录规则
+
+## 实际项目目录结构
+
+src/
+├── static/                    # 静态资源（Uniapp约定目录，不编译）
+│   ├── images/               # 图片资源（注意：页面背景图已改为使用网络地址，不再放在此处）
+│   ├── logo.png              # 应用Logo
+│   └── styles/               # 样式文件（支持Scss）
+│       ├── common.scss       # 公共样式（容器、背景图等）
+│       ├── index.scss        # 样式入口文件
+│       ├── mixin.scss        # 样式混合（公共样式片段）
+│       └── theme.scss        # 主题变量（颜色、字体等）
+│
+├── components/                # 公共组件（全局复用）
+│   └── HxTabScroll/          # 自定义组件（按组件名创建文件夹）
+│       └── HxTabScroll.vue   # 组件文件
+│
+├── uni_modules/              # UniApp插件市场下载的插件
+│   └── uview-plus/           # UI组件库（源码位置）
+│
+├── pages/                    # 页面视图（Uniapp约定目录，对应路由）
+│   ├── index/                # 首页模块
+│   │   ├── index.vue         # 首页主页面
+│   │   └── components/       # 首页私有组件（仅当前页面使用）
+│   │       └── DoctorCard.vue
+│   ├── login/                # 登录页面
+│   │   └── index.vue
+│   └── medicalForm/          # 健康档案页面（主包）
+│       └── index.vue
+│
+├── subPackages/              # 分包路径（注意：P大写）
+│   └── medicalForm/          # 健康档案模块（分包）
+│       └── index.vue
+│
+├── App.vue                   # 应用入口组件（Uniapp约定，全局布局）
+├── main.js                   # 入口文件（Vite初始化、全局注册）
+├── manifest.json             # Uniapp配置文件（应用信息、平台配置）
+├── pages.json                # Uniapp路由配置（页面路径、窗口样式、tabBar）
+└── uni.scss                  # Uniapp内置样式变量（可直接使用/覆盖）
+
+## 目录使用规范
+
+### 1. 静态资源 (static/)
+
+- **images/**: 存放图片资源
+  - 注意：页面背景图已改为使用网络地址（配置在 `src/config/system.js`），不放在此处，避免增加包体积
+  - 其他业务图片按需添加
+- **styles/**: 存放样式文件
+  - `common.scss`: 公共样式（如 `.container`，页面背景图通过 `page` 元素统一设置）
+  - `theme.scss`: 主题变量（颜色、字体等）
+  - `mixin.scss`: 样式混合函数
+  - `index.scss`: 样式入口，统一导入
+
+### 2. 组件目录 (components/)
+
+- **命名规范**: 组件文件夹使用 PascalCase，如 `HxTabScroll/`
+- **组件文件**: 组件文件夹内包含组件 `.vue` 文件
+- **组件注册**: 通过 `pages.json` 的 `easycom` 配置自动导入
+  - `hx-*` 前缀自动映射到 `@/components/u-*/u-*.vue`
+
+### 3. 页面目录 (pages/)
+
+- **主包页面**: 放在 `pages/` 目录下
+- **页面结构**: 每个页面一个文件夹，包含 `index.vue`
+- **私有组件**: 页面私有组件放在 `pages/xxx/components/` 目录
+- **路由配置**: 在 `pages.json` 的 `pages` 数组中配置
+
+### 4. 分包目录 (subPackages/)
+
+- **命名注意**: 目录名为 `subPackages`（P大写），不是 `subpackage`
+- **分包配置**: 在 `pages.json` 的 `subPackages` 数组中配置
+- **分包结构**: 每个分包一个 `root` 目录，包含该分包的页面
+
+### 5. 样式文件 (static/styles/)
+
+- **变量定义**: 颜色、字体等变量定义在 `theme.scss`
+- **公共样式**: 容器、背景图等公共样式在 `common.scss`
+- **混合函数**: 可复用的样式片段在 `mixin.scss`
+- **页面样式**: 页面私有样式使用 `<style lang="scss" scoped>`
+
+## 可选目录（按需创建）
+
+以下目录在实际项目中暂未创建，可根据需要添加：
+
+```
+src/
+├── api/                      # API配置（按业务模块拆分）
+│   ├── index.js              # API请求实例（封装uni.request）
+│   ├── user.js               # 用户相关接口
+│   └── medical.js            # 医疗相关接口
+│
+├── config/                   # 全局配置
+│   ├── index.js              # 主配置
+│   ├── env.js                # 环境变量映射
+│   └── enum.js               # 枚举类型定义
+│
+├── hooks/                    # 自定义Hook（Composition API）
+│   ├── useRequest.js         # 请求Hook
+│   ├── useUser.js            # 用户Hook
+│   └── useStorage.js         # 存储Hook
+│
+├── utils/                    # 工具类（全局复用函数）
+│   ├── index.js              # 工具函数汇总导出
+│   ├── format.js             # 格式化工具
+│   ├── validate.js           # 校验工具
+│   └── common.js             # 通用工具
+│
+└── store/                    # 状态管理（如使用Pinia）
+    ├── index.js              # Store实例创建
+    └── modules/               # 状态模块拆分
+        ├── user.js           # 用户状态
+        └── app.js            # 应用状态
+```
+
+## 重要说明
+
+1. **分包命名**: 分包目录名为 `subPackages`（注意大小写），在 `pages.json` 中配置时使用 `"root": "subPackages/xxx"`
+2. **组件自动导入**: 通过 `easycom` 配置，`hx-*` 前缀的组件会自动导入
+3. **样式文件位置**: 样式文件在 `static/styles/`，不是 `style/`
+4. **页面背景图**: 使用网络地址（配置在 `src/config/system.js` 的 `pageBackground.imageUrl`），不放在 `static` 目录，避免增加包体积
+5. **路由配置**: 所有页面必须在 `pages.json` 中配置，并设置 `"navigationStyle": "custom"`
+
+---
+
+---

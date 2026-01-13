@@ -1,0 +1,124 @@
+---
+alwaysApply: false
+---
+
+## 介绍
+这是一个点击用户头像从左侧弹出的抽屉盒子，需要复用性，建议放在公共组件内部或者当前目录的components下面，这个组件功能需要独立，数据加载交互都放在组件内部，只提供副组件开关抽屉和弹出方向控制。
+使用该组件的页面为src/pages/index/index.vue
+
+## 思路
+采用ui组件库提供的popup弹出组件
+外链参考文档`https://uview-plus.jiangruyi.com/components/popup.html`
+内部组件参考`src/uni_modules/uview-plus/components/u-popup`
+
+## 布局样式
+
+#### 布局
+width:684rpx;
+height:100vh;
+
+#### 头像
+width: 149rpx;
+height: 149rpx;
+margin-bottom:25rpx;
+
+#### 名字（陈小明）
+font-weight: 500;
+font-size: 40rpx;
+color: #13113E;
+line-height: 48rpx;
+margin-bottom:8rpx;
+
+#### 描述（32岁 · 软件工程师）
+font-weight: 400;
+font-size: 28rpx;
+color: #7D88AC;
+line-height: 48rpx;
+margin-bottom:25rpx;
+
+#### 健康档案button
+line-height: 68rpx;
+font-weight: 400;
+font-size: 26rpx;
+color: #13113E;
+line-height: 48rpx;
+background: #FFFFFF;
+box-shadow: 0rpx 4rpx 30rpx 0rpx #EFEEFE;
+border-radius: 38rpx;
+opacity: 0.72;
+backdrop-filter: blur(100px);
+
+##### icon
+size：36rpx
+用uview-plus的icon占位
+
+#### 通知中心
+padding-top:47rpx;
+padding-bottom:43rpx;
+font-weight: 500;
+font-size: 34rpx;
+color: #13113E;
+line-height: 48rpx;
+text-align: center;
+
+##### 原点
+width: 48rpx;
+height: 48rpx;
+background: #FF5E5E;
+
+##### icon
+size：48rpx
+用uview-plus的icon占位
+
+
+#### 历史问诊记录card
+
+background: rgba(255,255,255,0.6);
+border-radius: 30rpx;
+border: 1rpx solid #FFFFFF;
+backdrop-filter: blur(100px);
+padding:33rpx;
+
+##### 历史问诊记录
+font-weight: 500;
+font-size: 30rpx;
+color: #7D88AC;
+line-height: 48rpx;
+
+##### 感冒症状咨询，咳嗽、流涕持续3天
+font-weight: 500;
+font-size: 30rpx;
+color: #13113E;
+line-height: 48rpx;
+margin-bottom:8rpx;
+
+·文字需要超过一行一出隐藏省略号·
+
+##### 张伟 · 内科
+font-weight: 400;
+font-size: 28rpx;
+color: #7D88AC;
+line-height: 48rpx;
+
+#### 11-10 14:30
+font-weight: 400;
+font-size: 28rpx;
+color: #7D88AC;
+line-height: 48rpx;
+
+#####  查看全部记录
+font-weight: 500;
+font-size: 30rpx;
+color: #5F5BFE;
+line-height: 48rpx;
+text-align: left;
+font-style: normal
+
+#### 列表设置等
+font-weight: 500;
+font-size: 34rpx;
+color: #13113E;
+line-height: 110rpx;
+
+icon size48rpx；
+右侧箭头颜色：#C3C3C3

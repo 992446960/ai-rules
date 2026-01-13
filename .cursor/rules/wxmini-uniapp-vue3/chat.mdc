@@ -1,0 +1,564 @@
+---
+alwaysApply: false
+---
+
+## 创建
+
+页面路径：src/subPackages
+组件路径：当前目录下 components
+
+## 主要介绍
+
+1、这是患者与医生进行聊天的窗口，用户可以与医生进行交流沟通。
+2、进入路径为 src/pages/index/components/DoctorCard.vue 中 handleEnterClick 事件带上医生 id 跳转，以及 src/subPackages/doctorDetail/components/QuestionCard.vue 中 handleQuestionClick 事件带上所选择的问题和医生 id 跳转。（所以在页面中需要判断跳转来源，如果带有问题，需要默认发送该问题）。
+3、聊天的两种状态。一种是医生审核期间不能发送消息（参考图片 2），另外一种是正常发送（参考图片 1）。
+4、卡片类型介绍（请每一个都单独封装为组件后面会根据聊天信息类型进行渲染）时间线卡片、医生聊天气泡、患者聊天气泡（聊天类型渲染需要区分文字、语音、图片、pdf 等可以参照微信聊天）、初步病例诊断结果卡片、数字医生建议卡片、提示消息卡片、审核完成卡片、确认病例 popup 弹窗组件（参考图片 3）。
+4、底部输入框和按钮功能介绍：医生审核期间禁用不能发送消息并禁用输入框，否则是正常发送，左侧语音按钮点击后切换为麦克风图标并提供交互效果（主要让用户感受到说话的交互效果），比如小麦克风的缩放等，可以参考微信发送语音聊天，右侧加号按钮点击后从底部弹出照片或者文件（仅支持 pdf）选择。
+
+## 图片信息解析
+
+图 1 未长图展示模式，中间的内容部分是需要做超出隐藏滚动的，图三确认病例只参考图中弹出框。
+
+## 开发逻辑
+
+#### 页面布局逻辑参考如下
+
+ <view class="container">
+     <!-- 内容盒子flex布局-->
+    <view class="page-content">
+        <!-- 导航栏 -->
+    <view>
+      <HxNavbar :title="doctorInfo.name" />
+    </view>
+    <!-- 聊天区域撑满盒子可以滚动 -->
+    <view class="chat-content">
+      <scroll-view scroll-y="true" class="scroll-content">
+        <!-- 聊天信息展示区域 -->
+         <!--各类组件-->
+      </scroll-view>
+    </view>
+    <!--聊天按钮输入框-->
+    <view class="chat-input-box">
+     <!--聊天按钮组件-->
+    </view>
+    </view>
+</view>
+
+#### 病例 popup 布局逻辑参考如下
+
+ <view class="container">
+     <!-- 内容盒子flex布局-->
+    <view class="page-content">
+        <!-- 标题盒子-->
+    <view>
+    </view>
+    <!-- 内容盒子，超出滚动隐藏 -->
+    <view class="content">
+      <scroll-view scroll-y="true" class="scroll-content">
+        <!-- 聊天信息展示区域 -->
+         <!--各类组件-->
+      </scroll-view>
+    </view>
+    <!--按钮-->
+    <view class="btn">
+    </view>
+</view>
+
+#### 样式
+
+#### 样式
+
+请提取公共样式参考文档`.cursor/rules/style.mdc`
+
+##### 头像
+
+width:81rpx;
+height:81rpx;
+头像到气泡框的距离为 16rpx；
+
+##### 医生气泡
+
+背景盒子
+padding:20rpx 40rpx;
+margin-bottom:40rpx;
+max-width: 558rpx;
+background: rgba(255,255,255,0.6);
+border-radius: 30rpx 10rpx 30rpx 30rpx;
+border: 1rpx solid #FFFFFF;
+backdrop-filter: blur(100px);
+内容字体
+font-weight: 400;
+font-size: 30rpx;
+color: #13113E;
+line-height: 42rpx;
+
+##### 患者气泡
+
+**背景盒子**
+padding:20rpx 40rpx;
+margin-bottom:40rpx;
+max-width: 558rpx;
+background: #5A55ED;
+border-radius: 30rpx 10rpx 30rpx 30rpx;
+backdrop-filter: blur(100px);
+**内容字体**
+font-weight: 400;
+font-size: 30rpx;
+color: #FFFFFF;
+line-height: 42rpx;
+
+##### 医生后台审核完成组件
+
+**card-box**
+background: rgba(250,250,250,0.6);
+border-radius: 30rpx;
+border: 1rpx solid #FFFFFF;
+backdrop-filter: blur(100px);
+**icon**
+size 38rpx
+margin-right:12rpx;
+**title**
+font-weight: 500;
+font-size: 30rpx;
+color: #5A55ED;
+line-height: 42rpx;
+**title-box**
+line-height: 102rpx;
+
+**诊断内容盒子**
+background: #FFFFFF;
+border-radius: 30rpx;
+border: 1rpx solid #FFFFFF;
+backdrop-filter: blur(10px);
+padding:40rpx;
+margin-bottom:30rpx;
+
+**诊断内容文字**
+font-weight: 500;
+font-size: 32rpx;
+color: #13113E;
+line-height: 45rpx;
+margin-bottom:22rpx;
+
+**上传报告按钮**
+
+background: rgba(90,85,237,0.1);
+border-radius: 64rpx;
+**上传按钮文字**
+font-weight: 500;
+font-size: 30rpx;
+color: #5A55ED;
+line-height: 96rpx;
+
+**icon**
+size 38rpx
+margin-right:12rpx;
+
+##### 初步病例结果组件
+
+**card**
+font-weight: 500;
+font-size: 32rpx;
+color: #13113E;
+line-height: 45rpx;
+padding:40rpx;
+**title text**
+font-weight: 500;
+font-size: 32rpx;
+color: #13113E;
+line-height: 45rpx;
+**label text**
+font-weight: 400;
+font-size: 28rpx;
+color: #7D88AC;
+line-height: 40rpx;
+
+##### 数字医生健康建议 card
+
+**card**
+background: rgba(255,255,255,0.6);
+border-radius: 10rpx 30rpx 30rpx 30rpx;
+border: 1rpx solid #FFFFFF;
+backdrop-filter: blur(100px);
+padding:40rpx;
+
+**title**
+font-weight: 500;
+font-size: 32rpx;
+color: #13113E;
+line-height: 45rpx;
+
+**序号**
+width: 33rpx;
+height: 33rpx;
+background: #5A55ED;
+border-radius: 17rpx;
+
+**内容文字**
+font-weight: 400;
+font-size: 28rpx;
+color: #13113E;
+line-height: 40rpx;
+
+##### 确认病例弹窗
+
+**title**
+font-weight: 500;
+font-size: 38rpx;
+color: #13113E;
+line-height: 53rpx;
+**sub-title**
+font-weight: 500;
+font-size: 32rpx;
+color: #13113E;
+line-height: 45rpx
+**label**
+font-weight: 400;
+font-size: 26rpx;
+color: #7D88AC;
+line-height: 37rpx;
+**content-box**
+background: #F5F5F5;
+border-radius: 30rpx;
+**content-text**
+font-weight: 400;
+font-size: 28rpx;
+color: #13113E;
+line-height: 40rpx;
+
+##### 审核中卡片
+
+**icon**
+size 38rpx
+margin-right:12rpx;
+**text**
+font-weight: 500;
+font-size: 30rpx;
+color: #F26D00;
+line-height: 42rpx;
+
+##### 输入框按钮
+
+**盒子**
+border-radius: 64rpx;
+height: 96rpx;
+border: 1rpx solid #FFFFFF;
+backdrop-filter: blur(100px);
+
+**禁用状态背景**
+background: rgba(255,255,255,0.62);
+opacity: 0.91;
+
+**未禁用状态背景**
+background: #FFFFFF;
+
+**禁用状态 text**
+font-weight: 500;
+font-size: 30rpx;
+color: #AAAAAA;
+line-height: 42rpx;
+
+**未禁用状态 text**
+font-weight: 400;
+font-size: 30rpx;
+color: #B5BDD2;
+line-height: 42rpx;
+
+**icon**
+size 38rpx
+margin-right:12rpx;
+**text**
+font-weight: 500;
+font-size: 30rpx;
+color: #F26D00;
+line-height: 42rpx;
+
+
+## 流程
+功能前提条件：
+聊天内容是和AI智能体进行聊天。
+参考微信聊天效果，用户发送消息后，不做交互，等待返回数据直接渲染。
+1、患者发起聊天，通过跳转是否传递conversation_id判断是否为新聊天，如果说新的聊天不用发送获取聊天记录的请求，如果是历史聊天记录进来带有conversation_id，首先通过conversation_id请求聊天记录接口获取聊天列表，更新本地聊天记录列表，随后的聊天按照聊天记录一样的格式向本地列表中push消息，发送消息调用聊天接口成功后将患者消息push，等待聊天接口结束前（通过enent=final判断）输入框包括上传文件等操作均禁用，如果错误聊天信息不push如列表中，并提示发送失败。
+2、医生回复聊天，医生智能体接受user_input建立stream数据流链接成功后才发送消息也就是push到本地消息中，新聊天第一次聊天后会获取conversation_id，第二次需要将conversation_id加入请求参数中，小程序不展示思考过程，只展示event=final中的data.text中的内容，随后的聊天按照聊天记录一样的格式向本地列表中push消息，。
+3、在聊天过程中，当智能体返回event=final并且data.result_type=soap的时候需要弹出病例确认弹框，此时后端（前端不用操作，只是有助于理解逻辑）会在聊天记录中生成一条status=3的type=card数据，当用户点击了确认病例（调用确认病例接口成功）成功后关闭弹窗，同时调用获取聊天记录接口，替换本地数据，渲染，此时最新一条数据会是type=card并且status=1的记录，遵循第5条，前端将医生正在审核卡片加入本地聊天记录用于展示（此时输入框禁用包括语音和上传文件）；当用户点击取消（调用取消确认接口告诉后端，后端会在服务端删除type=card数据）成功后关闭弹窗，进入正常对话流程；此时用户强行关闭弹窗（包括强行关闭小程序等操作）并且又重新进入该聊天时，聊天历史会包括type=card数据的数据，并且会在最新一条，此时的type=card的数据status=3，会进行重新弹窗。
+4、用户确认病例后进入医生审核状态，输入框禁用，等待医生审核完成后才可以继续聊天。
+5、每次进入聊天室，获取历史聊天记录，如果最新的一条为type=card并且status=3的时候需要弹出病例确认提示框，type=card并且status=1或者status=2，展示病例状态组合（通过status判断展示的状态框类型）。
+
+#### card status不同类型逻辑
+**status=3 患者待确认**：在这个状态下，只要进入该聊天就需要弹出确认框，操作返回修改（包括关闭icon）和确认按钮进行状态修改。
+**status=1 医生待审核**：在这个状态下，只要进入该聊天就需要展示审核中气泡，禁用一切聊天操作。
+**status=2 医生审核完成**：在这个状态下，不会再次触发弹出病例确认提示框效果，可以正常进行一切聊天操作。
+
+#### 病例确认弹框
+
+内容按照后端返回的字段进行渲染，不展示患者信息。
+选择数据结构为
+```json
+[
+            {
+                "label": "主观资料",
+                "content": "10岁男性患儿，主诉咳嗽1个月。家长主动要求结束问诊，未提供进一步病史细节，包括咳嗽的具体特征、伴随症状、既往史、过敏史、家族史等信息。"
+            },
+            {
+                "label": "客观资料",
+                "content": "无体格检查及辅助检查资料。"
+            }
+        ]
+```
+
+有两种情况分别从聊天接口"result_type"="soap"和,聊天历史接口返回的 "status"= 3并且"type"="card"中的object.visit_case中获取。
+
+
+
+
+
+
+## 接口
+
+#### 聊天记录接口
+##### 接口路径
+GET /messages/{conversation_id}
+
+##### 聊天记录返回示例
+```json
+{
+    "code": 200,
+    "message": "获取成功",
+    "data": {
+        "items": [
+            {
+                "id": "94d2b21f-0803-40bc-9bf5-fff479e74852-img-0",
+                "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+                "role": "patient",
+                "content": "http://mediverseapi.huaxisy.com/user-images/23d5fce6919e4637b34a3d48b99726af.jpg",
+                "type": "image",
+                "create_at": "2025-12-15T01:57:06.948790+00:00"
+            },
+            {
+                "id": "ca36321d-4dba-4e2a-a9e4-05a08b357808",
+                "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+                "role": "patient_assistant",
+                "content": "您好，我是您的医学顾问。看到您提供的MRI图像显示腰椎区域有一个病灶，我需要了解一些基本信息来帮助分析您的情况。\n首先，请问您的性别和年龄是多少？\n您目前从事什么职业？有没有特殊的体力劳动或长时间保持固定姿势的工作？\n您是否有吸烟、饮酒的习惯？如果有，持续多久了？",
+                "type": "text",
+                "create_at": "2025-12-15T01:57:06.955773+00:00"
+            },
+            {
+                "id": "77f9670d-bfce-46a7-b4fb-b8ac3059e1bf",
+                "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+                "role": "patient",
+                "content": "每天腰痛，参考上传文件诊断",
+                "type": "text",
+                "create_at": "2025-12-15T01:59:31.235969+00:00"
+            },
+            {
+                "id": "ef65f1a1-2f17-4367-ae29-1b850460528d",
+                "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+                "role": "patient_assistant",
+                "content": "我理解您有腰痛的症状，这确实与MRI发现的病灶相关。不过为了更准确地分析您的情况，我需要先了解一些基本信息。请您先回答我刚才的问题：这些信息对于评估您腰痛的原因和制定合适的治疗方案非常重要。\n请问您的性别和年龄是多少？\n您目前从事什么职业？有没有特殊的体力劳动或长时间保持固定姿势的工作？\n您是否有吸烟、饮酒的习惯？如果有，持续多久了？",
+                "type": "text",
+                "create_at": "2025-12-15T01:59:31.241658+00:00"
+            },
+            {
+                "id": "9b9c073f-715c-41b6-a6f6-972b4bb46658",
+                "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+                "role": "patient",
+                "content": "结束问诊",
+                "type": "text",
+                "create_at": "2025-12-15T01:59:49.501616+00:00"
+            },
+                        {
+                "id": "e8339854-a25b-4bf2-9c74-3e41bbcd2044",
+                "conversation_id": "dbf6b287-9aca-4cb5-adc3-928757bf4f71",
+                "role": "patient_assistant",
+                "content": "好的，我们结束问诊。现在为您总结情况和提供建议。给患者的通俗解释：张先生，根据我们的交流，您的情况总结如下：主要问题：1.肩颈酸痛这很可能是由于长时间电脑工作导致的肌肉劳损，属于比较常见的情况2.右侧髋关节MRI异常检查发现有个病灶，但目前您没有任何不适症状建议：对于肩颈问题：建议您工作时注意姿势，每隔1小时起来活动一下，可以做些颈肩部伸展运动，局部热敷也有帮助对于髋关节病灶：虽然您现在没有症状，但这个MRI发现需要重视。建议您尽快去骨科专科就诊，可能需要做进一步的检查来明确这个病灶的性质日常注意：保持适度运动，如果肩颈疼痛加重或出现其他不适，及时就医最重要的是，髋关节的MRI发现需要专业医生的进一步评估，请不要忽视这个检查结果。",
+                "type": "text",
+                "create_at": "2025-12-15T06:20:50.669428+00:00"
+            },
+            {
+                "id": "e8339854-a25b-4bf2-9c74-3e41bbcd2044",
+                "conversation_id": "dbf6b287-9aca-4cb5-adc3-928757bf4f71",
+                "role": "patient_assistant",
+                "type": "card",
+                "object": {
+                    "status": 1,
+                    "visit_id": "955779d2-ca19-424f-ba6e-5d2f2e3dbe7e",
+                    "visit_case": [
+                        {
+                            "label": "主诉",
+                            "content": "肩颈酸痛3天"
+                        },
+                        {
+                            "label": "现病史",
+                            "content": "患者3天前无明显诱因出现肩颈部酸痛，性质为酸痛，疼痛程度8/10分，无放射痛。症状在使用电脑后加重，休息后可缓解。否认头晕、恶心、视物模糊等伴随症状。睡眠不受影响，无发热、体重下降、夜间盗汗等全身症状。右侧髋关节MRI发现异常病灶但患者无相应部位不适。"
+                        },
+                        {
+                            "label": "既往史",
+                            "content": "否认肿瘤病史、手术史、外伤史、过敏史、输血史。"
+                        },
+                        {
+                            "label": "个人史",
+                            "content": "长期从事电脑工作，需长时间保持固定姿势。否认吸烟、饮酒史。"
+                        },
+                        {
+                            "label": "家族史",
+                            "content": "否认家族中有肿瘤病史及其他遗传相关疾病史。"
+                        },
+                        {
+                            "label": "妇产科史",
+                            "content": "不适用（男性患者）"
+                        }
+                    ]
+                },
+                "create_at": "2025-12-15T06:20:50.669428+00:00"
+            },
+            {
+                "id": "bf1f733b-b374-4c4a-b56d-3911bfacfac6-img-0",
+                "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+                "role": "patient",
+                "content": "http://mediverseapi.huaxisy.com/user-images/04fa73bea7d041a58062066563cff9a4.jpg",
+                "type": "image",
+                "create_at": "2025-12-15T02:01:53.381301+00:00"
+            },
+            {
+                "id": "bf1f733b-b374-4c4a-b56d-3911bfacfac6-img-1",
+                "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+                "role": "patient",
+                "content": "http://mediverseapi.huaxisy.com/user-images/ac65a07c5a10475cb18c2128c507b442.jpg",
+                "type": "image",
+                "create_at": "2025-12-15T02:01:53.381301+00:00"
+            },
+            {
+                "id": "0b606012-fc31-47fd-8d72-596796e14c35",
+                "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+                "role": "patient_assistant",
+                "content": "您好，张先生。看到您提供的MRI图像显示右侧髋关节区域有一个异常肿块，我需要了解一些相关信息来帮助分析您的情况。\n请问您右侧髋部有什么不适症状吗？比如疼痛、肿胀、活动受限等？\n这个症状出现多久了？是突然出现的还是逐渐加重的？\n您目前从事什么职业？有没有特殊的体力劳动或长时间站立的工作？",
+                "type": "text",
+                "create_at": "2025-12-15T02:01:53.387625+00:00"
+            }
+        ]
+    }
+}
+```
+
+
+#### 聊天接口
+##### 请求路径
+POST /chat
+##### 聊天参数
+**Query 参数**
+doctor_id integer DoctorId 必需 示例值:69
+
+**Body 参数multipart/form-data必需**
+user_input string 可选 示例值:你好
+business_scenario string  必填  示例值:webui
+conversation_id string 可选 示例值:17591638-4531-477d-b8b9-7596c5cc28c4
+images file 可选 示例值: ["file:///Users/wang/Desktop/54903973_3bb5df9b-0838-43fc-8e0f-7270ed975e89.jpg","file:///Users/wang/Desktop/身份证.jpg"]
+
+
+##### 聊天接口智能体聊天返回示例
+ **注意**：以下为组合数据，实际数据格式是stram流式数据，每次读取的数据未其中一个对象可参考apifox模拟的数据`.cursor/rules/image.png`
+```json
+// 类型各举例了一个
+
+// 错误情况
+{
+    "event": "start",  // 传输开始标志
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": null
+}，
+{
+    "event": "error",
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": null
+}
+// 正常情况
+{
+    "event": "start",  // 传输开始标志
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": null
+},
+{
+    "event": "delta",
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": {
+        "content": "\n",
+        "thinking_content": null,
+        "tool_calls": null,
+        "accumulated_content": ""
+    }
+},
+{
+    "event": "delta",
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": {
+        "content": "您好",
+        "thinking_content": null,
+        "tool_calls": null,
+        "accumulated_content": "您好"
+    }
+},
+{
+    "event": "final",
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": {
+        "result_type": "text",
+        "text": "您好，张先生。看到您提供的MRI图像显示右侧髋关节区域有一个异常肿块，我需要了解一些相关信息来帮助分析您的情况。\n请问您右侧髋部有什么不适症状吗？比如疼痛、肿胀、活动受限等？\n这个症状出现多久了？是突然出现的还是逐渐加重的？\n您目前从事什么职业？有没有特殊的体力劳动或长时间站立的工作？"
+    }
+}
+
+// 特殊操作时候
+{
+    "event": "final",
+    "conversation_id": "5941e7bc-9d48-4dcf-b8a1-b3c4a387100f",
+    "request_id": "7826fc08-29dd-4575-b4b7-c6cd9274891e",
+     "visit_id": "cb67a40d-58ac-44cb-805f-7580d12887a9",
+    "data": {
+        "result_type": "soap",
+        "text": "我理解您希望结束问诊。基于您提供的信息，我将为您生成一份医疗总结。finish基于我们有限的交流，我已经为您生成了医疗总结。建议您尽快带孩子到正规医院儿科就诊，让医生进行详细的问诊和检查，以便明确诊断并制定合适的治疗方案。",
+        "soap": [
+            {
+                "label": "主观资料",
+                "content": "10岁男性患儿，主诉咳嗽1个月。家长主动要求结束问诊，未提供进一步病史细节，包括咳嗽的具体特征、伴随症状、既往史、过敏史、家族史等信息。"
+            },
+            {
+                "label": "客观资料",
+                "content": "无体格检查及辅助检查资料。"
+            }
+        ]
+    }
+}
+
+```
+
+
+#### 确认病例请求
+##### 接口地址
+POST
+/api/review_soap
+##### 接口参数
+Query 参数
+visit_id string 问诊id 必需
+
+
+#### 取消病例请求
+##### 接口地址
+DELETE
+/visit-case/delete_visit_case_by_visit_id
+##### 接口参数
+Query 参数
+visit_id string 问诊id 必需
+##### 返回示例
+```json
+{
+    "code": 200,
+    "message": "string",
+    "data": null
+}
+```
+

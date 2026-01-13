@@ -1,0 +1,153 @@
+---
+alwaysApply: true
+---
+
+# 样式规范
+
+## 基础样式说明
+
+读取公共sass样式`src/static/styles/common.scss`,页面中有同样的样式需要使用公共类名。
+
+
+## 公共样式规范
+
+### 字体样式
+
+#### 普通字体样式
+
+font-weight: 500;
+font-size: 30rpx;
+color: #13113E;
+line-height: 48rpx;
+**使用场景**: 正文内容、普通文本
+
+#### 描述字体样式 1
+
+font-weight: 400;
+font-size: 28rpx;
+color: #7D88AC;
+line-height: 48rpx;
+**使用场景**: 次要描述信息、辅助说明文字
+
+#### 描述字体样式 2
+
+font-weight: 400;
+font-size: 26rpx;
+color: #13113E;
+line-height: 48rpx;
+**使用场景**: 小号描述文字、提示信息
+
+#### Title 字体样式 1
+
+font-weight: 500;
+font-size: 34rpx;
+color: #13113E;
+line-height: 48rpx;
+**使用场景**: 页面主标题、重要标题
+
+#### Title 字体样式 2
+
+font-weight: 500;
+font-size: 30rpx;
+color: #7D88AC;
+line-height: 48rpx;
+**使用场景**: 次要标题、分组标题
+
+#### 列表 Label 字体样式
+
+font-weight: 500;
+font-size: 34rpx;
+color: #13113E;
+line-height: 48rpx;
+**使用场景**: 列表项标签、列表标题
+
+#### 禁用字段样式
+
+font-weight: 500;
+font-size: 30rpx;
+color: #AAAAAA;
+line-height: 42rpx;
+**使用场景**: 禁用状态的文字、不可操作提示
+
+#### 提示字段样式
+
+font-weight: 500;
+font-size: 30rpx;
+color: #F26D00;
+line-height: 42rpx;
+**使用场景**: 警告提示、重要提示信息
+
+### 卡片样式
+
+#### 卡片基础样式
+
+background: rgba(255, 255, 255, 0.6);
+border-radius: 30rpx;
+border: 1rpx solid #FFFFFF;
+backdrop-filter: blur(100px);
+**使用场景**: 普通卡片容器、内容卡片
+**说明**: 半透明背景 + 毛玻璃效果
+
+#### 表单禁用背景卡片样式
+
+background: #F5F5F5;
+border-radius: 30rpx;
+**使用场景**: 表单禁用状态、只读输入框背景
+
+## 样式使用建议
+
+1. **统一使用**: 严格按照以上样式规范使用，保持视觉一致性
+2. **颜色变量**: 建议将常用颜色提取到 `src/uni.scss` 中作为变量
+3. **样式复用**: 相同样式使用 mixin 或公共类，避免重复代码
+4. **响应式**: 使用 `rpx` 单位，确保多端适配
+5. **暗黑模式**: 书写样式时考虑暗黑模式的兼容性
+
+## 样式相关检查并更正
+
+1、将页面样式中等于 src/uni.scss 中存在的变量的用 src/uni.scss 中存在的变量表示。
+2、将复用样式抽离到 src/static/styles/common.scss 中进行维护，个性样式在页面中维。
+3、不要出现 common 中有私有变量污染，比如 doctor，查找是否有相同的已经定义的变量，有就使用，没有就抽离总结新的类名。
+
+## 页面样式中
+
+<view class="container page-xxx">
+     <view
+          class="hx-card notification-item"
+        >
+
+    <text class="hx-title item-title">{{ item.title }}</text>
+
+  </view>
+</template>
+
+<style lang="scss" scoped>
+  .notification-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 24rpx;
+    padding: 30rpx;
+}
+
+.item-title {
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+</style>
+
+## common.scss
+
+.hx-card{
+background: $uni-bg-color;
+border-radius: 30rpx;
+border: 1rpx solid #ffffff;
+backdrop-filter: blur(100px);
+box-sizing: border-box;
+}
+.hx-title {
+font-size: 32rpx;
+color: $uni-text-color;
+line-height: 48rpx;
+font-weight: 500;
+}

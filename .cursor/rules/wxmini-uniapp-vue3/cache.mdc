@@ -1,0 +1,189 @@
+---
+alwaysApply: false
+---
+
+## 聊天功能修改
+主要设计页面
+`src/subPackages/chat/index.vue`
+
+## 概论
+
+1、需要新增思考过程，流式输出思考过程，思考过程显示框默认高度为200rpx，超出部分隐藏并在显示框下方展示“展开全部”按钮，点击按钮展开全部思考过程，并展示“收起”按钮。
+2、思考过程状态分析，状态一：链接成功返回数据流时候，提示词为“正在进行深度思考”，并加上动态三个灰色点波浪滚动，如果没有思考过程流的输出，不展示思考过程显示框，如果有数据（thinking_content字段）呈现打字机效果输出，最大高度为200rpx，超出部分隐藏并在显示框下方展示“展开全部”按钮。思考过程显示框与content内容框中间使用虚线隔开，思考过程输出完毕，content框内容（content字段）继续输出，最好在"event": "final"下拼接最后的content内容，关于content内容严格参考原来的逻辑。
+3、接口和之前接口的变动，增加了“thinking_content”字段，用于思考过程的输出，首先会先进行思考过程的输出，你可以通过判断“content”字段是否开始有有值输出来判断思考过程斯否已完成。完成后不要再进行拼接或者替换操作。原来的触发弹框字段等逻辑全部保留。本次修改只针对思考过程功能的加入。
+4、原来的普通聊天气泡卡片保留，在src/subPackages/chat/components下新增带有思考过程的聊天气泡卡片。
+
+## UI原型图
+
+**地址**： `.cursor/rules/虚拟诊间对话.png`
+
+#### UI样式描述
+请参考描述严格进行样式书写
+
+1、左侧hxicon（name=sikaozhong，size=36rpx） + 文字（可用公共类名hx-title-sm ，文字内容包括‘已完成深度思考’和‘正在进行深度思考’）+ 右侧hxicon（联动展开全部显示的时候name=zhankai-gray和收起按钮显示的时候name=shouqi-gray），当没有任何输出的时候右侧未波动图（参考现有波动图，颜色更改为“#D8D8D8”，大小更改为10rpx，间距更改为10rpx），当链接成功并且thinking_content有输出的时候展示展开按钮根据用户操作展开。
+2、思考框内容，根据内容大小撑开盒子未展开的时候最大高度为200rpx，展开后高度自适应。可以参考`src/subPackages/chat/components/DoctorDetailCard.vue`下的up-read-more。（文本内容font-weight: 400;font-size: 28rpx;color: #7D88AC;line-height: 40rpx;text-align: justify;）
+
+## 数据结构
+ 以下数据只截取了数据流过成中关键的部分，比如开始只有thinking_content输出，thinking_content和content内容交替，以及final的时候
+ result_type=text的时候text内容的完整展示
+
+ #### 修改后的流式接口返回数据格式
+```json
+
+{
+    "event": "start",
+    "conversation_id": "33f41f58-e51e-4f10-ad8d-92b9a97264eb",
+    "request_id": "7796c88d-fdb3-4c69-b81a-f7ddc9d58110",
+    "data": null
+}
+{
+    "event": "delta",
+    "conversation_id": "33f41f58-e51e-4f10-ad8d-92b9a97264eb",
+    "request_id": "7796c88d-fdb3-4c69-b81a-f7ddc9d58110",
+    "data": {
+        "content": "",
+        "thinking_content": "",
+        "tool_calls": null
+    }
+}
+{
+    "event": "delta",
+    "conversation_id": "33f41f58-e51e-4f10-ad8d-92b9a97264eb",
+    "request_id": "7796c88d-fdb3-4c69-b81a-f7ddc9d58110",
+    "data": {
+        "content": "",
+        "thinking_content": "患者",
+        "tool_calls": null
+    }
+}
+{
+    "event": "delta",
+    "conversation_id": "33f41f58-e51e-4f10-ad8d-92b9a97264eb",
+    "request_id": "7796c88d-fdb3-4c69-b81a-f7ddc9d58110",
+    "data": {
+        "content": "",
+        "thinking_content": "患者提供了影像检查图片，但无法描述具体疼痛部位。这是一个需要特殊处理的情况，因为：1.患者无法提供主诉的具体位置和性质2.需要基于影像检查结果进行分析3.需要先了解基本的临床背景信息根据规则，我需要从Step1开始，先采集基本的人口统计学信息，然后了解影像检查的背景情况",
+        "tool_calls": null
+    }
+}
+{
+    "event": "delta",
+    "conversation_id": "33f41f58-e51e-4f10-ad8d-92b9a97264eb",
+    "request_id": "7796c88d-fdb3-4c69-b81a-f7ddc9d58110",
+    "data": {
+        "content": "",
+        "thinking_content": "患者提供了影像检查图片，但无法描述具体疼痛部位。这是一个需要特殊处理的情况，因为：1.患者无法提供主诉的具体位置和性质2.需要基于影像检查结果进行分析3.需要先了解基本的临床背景信息根据规则，我需要从Step1开始，先采集基本的人口统计学信息，然后了解影像检查的背景情况。",
+        "tool_calls": null
+    }
+}
+{
+    "event": "delta",
+    "conversation_id": "33f41f58-e51e-4f10-ad8d-92b9a97264eb",
+    "request_id": "7796c88d-fdb3-4c69-b81a-f7ddc9d58110",
+    "data": {
+        "content": "您好",
+        "thinking_content": "患者提供了影像检查图片，但无法描述具体疼痛部位。这是一个需要特殊处理的情况，因为：1.患者无法提供主诉的具体位置和性质2.需要基于影像检查结果进行分析3.需要先了解基本的临床背景信息根据规则，我需要从Step1开始，先采集基本的人口统计学信息，然后了解影像检查的背景情况。",
+        "tool_calls": null
+    }
+}
+{
+    "event": "delta",
+    "conversation_id": "33f41f58-e51e-4f10-ad8d-92b9a97264eb",
+    "request_id": "7796c88d-fdb3-4c69-b81a-f7ddc9d58110",
+    "data": {
+        "content": "您好！我看到您提供了影像检查图片，但您无法描述具体的疼痛部位。为了能够更好地分析您的情况，我需要先了解一些基本信息。请先回答这些问题，这样我才能结合您的影像检查结果给出更准确的分析和建议。",
+        "thinking_content": "患者提供了影像检查图片，但无法描述具体疼痛部位。这是一个需要特殊处理的情况，因为：1.患者无法提供主诉的具体位置和性质2.需要基于影像检查结果进行分析3.需要先了解基本的临床背景信息根据规则，我需要从Step1开始，先采集基本的人口统计学信息，然后了解影像检查的背景情况。",
+        "tool_calls": null
+    }
+}
+{
+    "event": "final",
+    "conversation_id": "33f41f58-e51e-4f10-ad8d-92b9a97264eb",
+    "request_id": "7796c88d-fdb3-4c69-b81a-f7ddc9d58110",
+    "data": {
+        "result_type": "text",
+        "text": "您好！我看到您提供了影像检查图片，但您无法描述具体的疼痛部位。为了能够更好地分析您的情况，我需要先了解一些基本信息。请先回答这些问题，这样我才能结合您的影像检查结果给出更准确的分析和建议。\n请问您的年龄和性别是什么？\n您做的是哪个部位的影像检查？\n虽然您不确定具体疼痛位置，但您能大致描述一下疼痛是在身体的哪个区域吗？比如是胸部、腹部、头部还是四肢？\n这种不适感是什么时候开始的？"
+    }
+}
+```
+
+#### 修改前的流式数据返回格式
+```json
+// 类型各举例了一个
+
+// 错误情况
+{
+    "event": "start",  // 传输开始标志
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": null
+}，
+{
+    "event": "error",
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": null
+}
+// 正常情况
+{
+    "event": "start",  // 传输开始标志
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": null
+},
+{
+    "event": "delta",
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": {
+        "content": "\n",
+        "thinking_content": null,
+        "tool_calls": null,
+        "accumulated_content": ""
+    }
+},
+{
+    "event": "delta",
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": {
+        "content": "您好",
+        "thinking_content": null,
+        "tool_calls": null,
+        "accumulated_content": "您好"
+    }
+},
+{
+    "event": "final",
+    "conversation_id": "17591638-4531-477d-b8b9-7596c5cc28c4",
+    "request_id": "780634bc-d2be-4abc-9afd-5ff090dceb40",
+    "data": {
+        "result_type": "text",
+        "text": "您好，张先生。看到您提供的MRI图像显示右侧髋关节区域有一个异常肿块，我需要了解一些相关信息来帮助分析您的情况。\n请问您右侧髋部有什么不适症状吗？比如疼痛、肿胀、活动受限等？\n这个症状出现多久了？是突然出现的还是逐渐加重的？\n您目前从事什么职业？有没有特殊的体力劳动或长时间站立的工作？"
+    }
+}
+
+// 特殊操作时候
+{
+    "event": "final",
+    "conversation_id": "5941e7bc-9d48-4dcf-b8a1-b3c4a387100f",
+    "request_id": "7826fc08-29dd-4575-b4b7-c6cd9274891e",
+     "visit_id": "cb67a40d-58ac-44cb-805f-7580d12887a9",
+    "data": {
+        "result_type": "soap",
+        "text": "我理解您希望结束问诊。基于您提供的信息，我将为您生成一份医疗总结。finish基于我们有限的交流，我已经为您生成了医疗总结。建议您尽快带孩子到正规医院儿科就诊，让医生进行详细的问诊和检查，以便明确诊断并制定合适的治疗方案。",
+        "soap": [
+            {
+                "label": "主观资料",
+                "content": "10岁男性患儿，主诉咳嗽1个月。家长主动要求结束问诊，未提供进一步病史细节，包括咳嗽的具体特征、伴随症状、既往史、过敏史、家族史等信息。"
+            },
+            {
+                "label": "客观资料",
+                "content": "无体格检查及辅助检查资料。"
+            }
+        ]
+    }
+}
+
+```
+

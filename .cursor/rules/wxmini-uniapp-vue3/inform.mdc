@@ -1,0 +1,58 @@
+---
+alwaysApply: false
+---
+
+## 介绍
+1、这是一个消息通知中心展示页面，主要布局为自定义导航栏，名称为通知中心，通知中心列表内容。
+2、里面有每个通知消息有消息类型，不同的消息类型展示的icon不同。
+3、每个消息分为名字（与名称同行的有已读状态）和描述，描述需要实现2行溢出隐藏。
+4、该页面需要在为src/subPackages/notificationCenter/index.vue中书写（注意读取分包页面创建规则）
+
+## 思路
+1、自定义导航采用ui组件库提供的up-navbar组件颜色为透明
+外链参考文档`https://uview-plus.jiangruyi.com/components/navbar.html`
+内部组件参考`src/uni_modules/uview-plus/components/u-navbar`
+2、通知列表采用flex：1层开填满，用scroll-view包裹
+3、逻辑：数据获取目前不采用分页个数方式获取，但需要兼顾今后可能采取分页获取，所以需要有下拉刷新，触底加载（需要写上，但这个版本不用）
+4、同样采用页面背景
+
+## 布局样式
+
+
+#### item card
+background: rgba(255,255,255,0.6);
+border-radius: 30rpx;
+border: 1rpx solid #FFFFFF;
+backdrop-filter: blur(100px);
+margin:12rpx 0;
+
+##### icon
+size：71rpx；
+margin-right:23rpx;
+
+##### item title
+font-size: 32rpx;
+color: #13113E;
+line-height: 48rpx;
+text-align: left;
+
+#### item status unread
+width: 15rpx;
+height: 15rpx;
+background: #FF5E5E;
+#### item status read
+background: #DADADA;
+
+##### item des
+font-weight: 400;
+font-size: 28rpx;
+color: #7D88AC;
+line-height: 38rpx;
+text-align: left;
+
+##### item time text
+font-weight: 400;
+font-size: 24rpx;
+color: #AEB7D4;
+line-height: 48rpx;
+
