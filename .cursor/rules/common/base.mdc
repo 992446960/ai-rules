@@ -59,6 +59,30 @@ alwaysApply: false
 - **Hooks**：自定义 Hooks 命名以 `use` 开头；合理使用 `useMemo`/`useCallback` 避免无效渲染。
 - **副作用**：严格限制 `useEffect` 的使用，防止闭包陷阱和死循环。
 
+### 2.4 UI 渲染策略（数据驱动 · 强制）
+
+- 在 **Vue / React** 项目中，只要涉及以下场景：
+  - 列表（List）
+  - 表格（Table / Columns）
+  - 设置项（Settings）
+  - 表单项（Form Items）
+  - 菜单、描述型信息、**任何重复 UI 结构**  
+  **必须优先采用数据驱动的配置化渲染方式。**
+
+- 触发规则（强制）：
+  - 当配置数组长度 ≥ 3 时，默认必须采用配置驱动渲染方式
+	- 不允许因为“当前实现简单”而退化为模板硬编码
+
+- 推荐模式：
+  - 使用 `config + render` 或 `config + component` 描述 UI 结构
+  - 模板 / JSX **仅负责遍历与渲染**，不承载业务结构决策
+
+- 示例（概念性）：
+  ```ts
+  const listConfig = [
+    { label: 'xxx', icon: 'xxx' }
+  ]
+  
 ---
 
 ## 3. 质量、安全与性能 (Quality Assurance)
